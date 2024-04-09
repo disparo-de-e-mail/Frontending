@@ -27,7 +27,6 @@ export default function HomePage(): JSX.Element {
     Remetente: '',
     To: '',
   })
-  const [managementOptions, setManagementOptions] = useState<EmailOptions>()
 
   const options = [{ value: 'Teste1', text: 'Grupo de e-mails do Teste1' }]
 
@@ -106,19 +105,26 @@ export default function HomePage(): JSX.Element {
             <Grid columns={1} rows={1} gap={16}>
               <GridItem>
                 <Box padding={16}>
-                  <TextField
-                    label={'Assunto'}
-                    name={'assunto'}
-                    fullWidth
-                    autoComplete="off"
-                    value={createEmail.Assunto}
-                    onChange={(e) =>
-                      setCreateEmail({
-                        ...createEmail,
-                        Assunto: e.target.value,
-                      })
-                    }
-                  />
+                  <Boxed>
+                    <Box padding={16}>
+                      <Text2 regular>Assunto</Text2>
+                    </Box>
+                    <Box padding={16}>
+                      <TextField
+                        label={''}
+                        name={'assunto'}
+                        fullWidth
+                        autoComplete="off"
+                        value={createEmail.Assunto}
+                        onChange={(e) =>
+                          setCreateEmail({
+                            ...createEmail,
+                            Assunto: e.target.value,
+                          })
+                        }
+                      />
+                    </Box>
+                  </Boxed>
                 </Box>
                 <Box padding={16}>
                   <Boxed>
