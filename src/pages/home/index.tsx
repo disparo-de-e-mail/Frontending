@@ -1,10 +1,14 @@
+import style from './style.module.css'
 import { CreateEmail, CreateEmailErrors } from '@/@types/generate/imediatoTypes'
+import { type EmailOptions } from '@/@types/groupsEmail/emailGroup'
 import { HomeLayout } from '@/templates/layout'
 import {
   Box,
   Boxed,
+  ButtonSecondary,
   Grid,
   GridItem,
+  Select,
   Stack,
   Text2,
   Text6,
@@ -13,7 +17,7 @@ import {
 import React, { useState } from 'react'
 
 export default function HomePage(): JSX.Element {
-  const API_URL = 'http://192.168.1.15:5000'
+  const API_URL = ''
   const [errors, setErrors] = useState<CreateEmailErrors>({})
   const [dialogMessage, setDialogMessage] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -23,24 +27,22 @@ export default function HomePage(): JSX.Element {
     Remetente: '',
     To: '',
   })
-  const managementOptions = useState<['Teste 1']>()
+  const [managementOptions, setManagementOptions] = useState<EmailOptions>()
+
+  const options = [{ value: 'Teste1', text: 'Grupo de e-mails do Teste1' }]
+
+  const [ManagementOptionsSelected, setManagementOptionsSelected] =
+    useState<string>('')
   const handleCloseDialog = () => setDialogOpen(true)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log('O Submit foi acionado', handleSubmit)
     setErrors({})
-    {
-      /* TODO -
-     BUG: Resolver erro: 'CreateEmail' só faz referência a um tipo, mas está sendo usado como valor no momento.ts(2693) any
- 
- */
-    }
-    const createEmail = new CreateEmail(e.currentTarget)
-    const assunto = createEmail.get('Assunto') as string
-    const corpo = createEmail.get('Corpo') as string
-    const remetente = createEmail.get('Remetente') as string
-    const to = createEmail.get('To') as string
+    const assunto = createEmail.Assunto
+    const corpo = createEmail.Corpo
+    const remetente = createEmail.Remetente
+    const to = createEmail.To
 
     const createEmailForBackend = {
       ...createEmail,
@@ -100,14 +102,8 @@ export default function HomePage(): JSX.Element {
           <Box padding={16}>
             <Text6>Conteúdo do E-mail</Text6>
           </Box>
-
-          <Grid columns={1} rows={1} gap={16}>
-            {/* TODO -
-             BUG: Resolver erro: O argumento do tipo 'FormEvent<HTMLDivElement>' não é atribuível ao parâmetro do tipo 'FormEvent<HTMLFormElement>'.
-          O tipo 'HTMLDivElement' não tem as propriedades a seguir do tipo 'HTMLFormElement': acceptCharset, action, autocomplete, elements e mais 15.ts(2345)
-         
-         */}
-            <div key={'form'} onSubmit={(e) => handleSubmit(e)}>
+          <form onSubmit={handleSubmit}>
+            <Grid columns={1} rows={1} gap={16}>
               <GridItem>
                 <Box padding={16}>
                   <TextField
@@ -115,6 +111,13 @@ export default function HomePage(): JSX.Element {
                     name={'assunto'}
                     fullWidth
                     autoComplete="off"
+                    value={createEmail.Assunto}
+                    onChange={(e) =>
+                      setCreateEmail({
+                        ...createEmail,
+                        Assunto: e.target.value,
+                      })
+                    }
                   />
                 </Box>
                 <Box padding={16}>
@@ -122,7 +125,6 @@ export default function HomePage(): JSX.Element {
                     <Box padding={16}>
                       <Text2 regular>Corpo</Text2>
                     </Box>
-
                     <Box padding={16}>
                       <TextField
                         label={''}
@@ -130,6 +132,13 @@ export default function HomePage(): JSX.Element {
                         fullWidth
                         autoComplete="off"
                         multiline
+                        value={createEmail.Corpo}
+                        onChange={(e) =>
+                          setCreateEmail({
+                            ...createEmail,
+                            Corpo: e.target.value,
+                          })
+                        }
                       />
                     </Box>
                   </Boxed>
@@ -139,17 +148,53 @@ export default function HomePage(): JSX.Element {
                     <Box padding={16}>
                       <Text2 regular>Remetente</Text2>
                     </Box>
-                    {/* TODO -
-     NOTE: Fazer uma função -  options - para component Select 
-     Modelo: const fruitOptions = fruitEntries.map(([text, value]) => ({text, value}));
- 
- */}
-                    <Box padding={16}></Box>
+                    <Box padding={16}>
+                      <TextField
+                        label={''}
+                        name={'remetente'}
+                        fullWidth
+                        autoComplete="off"
+                        value={createEmail.Remetente}
+                        onChange={(e) =>
+                          setCreateEmail({
+                            ...createEmail,
+                            Remetente: e.target.value,
+                          })
+                        }
+                      />
+                    </Box>
+                  </Boxed>
+                </Box>
+                <Box padding={16}>
+                  <Boxed>
+                    <Box padding={16}>
+                      <Text2 regular>Destinatário</Text2>
+                    </Box>
+                    <Box padding={16}>
+                      <Select
+                        label={''}
+                        name={'To'}
+                        value={ManagementOptionsSelected}
+                        onChangeValue={(value) => {
+                          setManagementOptionsSelected(value)
+                        }}
+                        options={options}
+                      />
+                    </Box>
                   </Boxed>
                 </Box>
               </GridItem>
-            </div>
-          </Grid>
+            </Grid>
+            <Box
+              padding={16}
+              paddingX={4}
+              className={style.containerSubmitButton}
+            >
+              <ButtonSecondary submit small className={style.submitButton}>
+                Disparar e-mail
+              </ButtonSecondary>
+            </Box>
+          </form>
         </Stack>
       </Box>
     </HomeLayout>

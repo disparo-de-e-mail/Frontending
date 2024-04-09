@@ -1,0 +1,8 @@
+.submitButton {
+  width: 10vw;
+}
+.containerSubmitButton {
+  display: flex;
+  position: relative;
+  margin-left: 85%;
+}
